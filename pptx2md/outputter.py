@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+import io
 import re
 import urllib.parse
 from typing import List
@@ -26,8 +26,8 @@ from pptx2md.utils import rgb_to_hex
 class Formatter:
 
     def __init__(self, config: ConversionConfig):
-        os.makedirs(config.output_path.parent, exist_ok=True)
-        self.ofile = open(config.output_path, 'w', encoding='utf8')
+        self.ofile = io.StringIO()
+        self.result: list[tuple[str | None, str | None]] = []
         self.config = config
 
     def output(self, presentation_data: ParsedPresentation):
@@ -71,13 +71,11 @@ class Formatter:
                         self.put_table([[self.get_formatted_runs(cell) for cell in row] for row in element.content])
                 last_element = element
 
-            if not self.config.disable_notes and slide.notes:
-                self.put_para('---')
-                for note in slide.notes:
-                    self.put_para(note)
+            text = self.ofile.getvalue()
+            notes = "".join(slide.notes)
 
-            if slide_idx < len(presentation_data.slides) - 1 and self.config.enable_slides:
-                self.put_para("\n---\n")
+            self.result.append((text if text else None, notes if notes else None))
+            self.ofile = io.StringIO()
 
         self.close()
 
@@ -360,7 +358,7 @@ class QuartoFormatter(Formatter):
                     self.put_para(note)
                 self.put_para(":::")
 
-            if slide_idx < len(presentation_data.slides) - 1 and self.config.enable_slides:
+            if slide_idx < len(presentation_data.slides) - 1:
                 self.put_para("\n---\n")
 
         self.close()

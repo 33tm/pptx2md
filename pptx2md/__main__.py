@@ -63,8 +63,7 @@ def parse_args() -> ConversionConfig:
         args.output = Path(f'out{extension}')
 
     return ConversionConfig(
-        pptx_path=args.pptx_path,
-        output_path=args.output,
+        pptx=args.pptx,
         image_dir=args.image_dir or args.output.parent / 'img',
         title_path=args.title,
         image_width=args.image_width,
@@ -73,7 +72,6 @@ def parse_args() -> ConversionConfig:
         disable_color=args.disable_color,
         disable_escaping=args.disable_escaping,
         disable_notes=args.disable_notes,
-        enable_slides=args.enable_slides,
         try_multi_column=args.try_multi_column,
         is_wiki=args.wiki,
         is_mdk=args.mdk,
