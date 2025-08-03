@@ -24,11 +24,8 @@ from pydantic import BaseModel
 class ConversionConfig(BaseModel):
     """Configuration for PowerPoint to Markdown conversion."""
 
-    pptx_path: Path
-    """Path to the pptx file to be converted"""
-
-    output_path: Path
-    """Path of the output file"""
+    pptx: bytes
+    """Bytes of the pptx file to be converted"""
 
     image_dir: Optional[Path]
     """Where to put images extracted"""
@@ -53,9 +50,6 @@ class ConversionConfig(BaseModel):
 
     disable_notes: bool = False
     """Do not add presenter notes"""
-
-    enable_slides: bool = False
-    """Deliniate slides with `\n---\n`"""
 
     is_wiki: bool = False
     """Generate output as wikitext (TiddlyWiki)"""

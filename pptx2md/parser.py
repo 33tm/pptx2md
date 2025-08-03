@@ -150,14 +150,14 @@ def process_picture(config: ConversionConfig, shape, slide_idx) -> Union[ImageEl
 
     global picture_count
 
-    file_prefix = ''.join(os.path.basename(config.pptx_path).split('.')[:-1])
-    pic_name = file_prefix + f'_{picture_count}'
     pic_ext = shape.image.ext
     if not os.path.exists(config.image_dir):
         os.makedirs(config.image_dir)
 
-    output_path = config.image_dir / f'{pic_name}.{pic_ext}'
-    common_path = os.path.commonpath([config.output_path, config.image_dir])
+    output_path = config.image_dir / f'{picture_count}.{pic_ext}'
+    # common_path = os.path.commonpath([config.output_path.parent, config.image_dir])
+    # replace with current directory
+    common_path = os.path.curdir
     img_outputter_path = os.path.relpath(output_path, common_path)
     with open(output_path, 'wb') as f:
         f.write(shape.image.blob)
