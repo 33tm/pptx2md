@@ -155,29 +155,29 @@ def process_picture(config: ConversionConfig, shape, slide_idx) -> Union[ImageEl
     if not os.path.exists(config.image_dir):
         os.makedirs(config.image_dir)
 
-    output_path = config.image_dir / f'{token_urlsafe(32)}.{pic_ext}'
-    # common_path = os.path.commonpath([config.output_path.parent, config.image_dir])
-    # replace with current directory
+    file = token_urlsafe(32)
+    output_path = config.image_dir / f'{file}.{pic_ext}'
+
     with open(output_path, 'wb') as f:
         f.write(shape.image.blob)
         picture_count += 1
 
     # normal images
     if pic_ext != 'wmf':
-        return ImageElement(path=str(output_path), width=config.image_width)
+        return ImageElement(path=file, width=config.image_width)
 
     # wmf images, try to convert, if failed, output as original
     try:
         try:
             Image.open(output_path).save(os.path.splitext(output_path)[0] + '.png')
-            return ImageElement(path=os.path.splitext(output_path)[0] + '.png', width=config.image_width)
+            return ImageElement(path=file, width=config.image_width)
         except Exception:  # Image failed, try another
             from wand.image import Image
             with Image(filename=output_path) as img:
                 img.format = 'png'
                 img.save(filename=os.path.splitext(output_path)[0] + '.png')
             logger.info(f'Image {output_path} in slide {slide_idx} converted to png.')
-            return ImageElement(path=os.path.splitext(output_path)[0] + '.png', width=config.image_width)
+            return ImageElement(path=file, width=config.image_width)
     except Exception:
         logger.warning(f'Cannot convert wmf image {output_path} in slide {slide_idx} to png, skipped.')
         return None
