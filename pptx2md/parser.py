@@ -155,7 +155,7 @@ def process_picture(config: ConversionConfig, shape, slide_idx) -> Union[ImageEl
     if not os.path.exists(config.image_dir):
         os.makedirs(config.image_dir)
 
-    output_path = f'{token_urlsafe(32)}.{pic_ext}'
+    output_path = config.image_dir / f'{token_urlsafe(32)}.{pic_ext}'
     # common_path = os.path.commonpath([config.output_path.parent, config.image_dir])
     # replace with current directory
     common_path = os.path.curdir
