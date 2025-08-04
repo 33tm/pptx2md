@@ -18,6 +18,7 @@ import logging
 import os
 from functools import partial
 from operator import attrgetter
+from secrets import token_urlsafe
 from typing import List, Union
 
 from PIL import Image
@@ -154,7 +155,7 @@ def process_picture(config: ConversionConfig, shape, slide_idx) -> Union[ImageEl
     if not os.path.exists(config.image_dir):
         os.makedirs(config.image_dir)
 
-    output_path = config.image_dir / f'{picture_count}.{pic_ext}'
+    output_path = f'{token_urlsafe(32)}.{pic_ext}'
     # common_path = os.path.commonpath([config.output_path.parent, config.image_dir])
     # replace with current directory
     common_path = os.path.curdir
