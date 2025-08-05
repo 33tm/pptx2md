@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import io
 import logging
 import os
 import re
@@ -54,8 +53,28 @@ def fix_null_rels(file_path):
     return tgt
 
 
-def load_pptx(pptx: bytes) -> Presentation:
-    return Presentation(io.BytesIO(pptx))
+def load_pptx(file_path: str) -> Presentation:
+    if not os.path.exists(file_path):
+        logger.error(f'source file {file_path} not exist!')
+        logger.error(f'absolute path: {os.path.abspath(file_path)}')
+        raise FileNotFoundError(file_path)
+    try:
+        prs = Presentation(file_path)
+    except KeyError as err:
+        if len(err.args) > 0 and re.match(r'There is no item named .*NULL.* in the archive', str(err.args[0])):
+            logger.info('corrupted links found, trying to purge...')
+            try:
+                res_path = fix_null_rels(file_path)
+                logger.info(f'purged file saved to {res_path}.')
+                prs = Presentation(res_path)
+            except:
+                logger.error(
+                    'failed to purge corrupted links, you can report this at https://github.com/ssine/pptx2md/issues')
+                raise err
+        else:
+            logger.error('unknown error, you can report this at https://github.com/ssine/pptx2md/issues')
+            raise err
+    return prs
 
 
 def prepare_titles(title_path: Path) -> dict[str, int]:

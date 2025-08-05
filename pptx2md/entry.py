@@ -26,7 +26,7 @@ def convert(config: ConversionConfig):
     if config.title_path:
         config.custom_titles = prepare_titles(config.title_path)
 
-    prs = load_pptx(config.pptx)
+    prs = load_pptx(config.pptx_path)
 
     logger.info("conversion started")
 
