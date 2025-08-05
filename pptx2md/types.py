@@ -24,8 +24,8 @@ from pydantic import BaseModel
 class ConversionConfig(BaseModel):
     """Configuration for PowerPoint to Markdown conversion."""
 
-    pptx_path: Path
-    """Path to the pptx file to be converted"""
+    pptx: bytes
+    """Bytes of the pptx file to be converted"""
 
     image_dir: Optional[Path]
     """Where to put images extracted"""
